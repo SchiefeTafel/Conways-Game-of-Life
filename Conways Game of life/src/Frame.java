@@ -2,12 +2,21 @@ import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -29,26 +38,47 @@ public class Frame extends JFrame{
 	private canvas game_canvas;
 	
 	private Cell[][] cells;
+	private SimulationManager sim;
+	
+	public static boolean isSimulationRunning = false;
+	public static boolean isControlScreenActive = true;
+	
+	private Image play_img;
+	private Image stop_img;
+	private Image control_img;
 	
 	//UI and Listeners
 	M_MouseListener mouseListener;
+	M_KeyListener keyListener;
 	
-	public Frame()
+	public static float speed_factor = 1.0f;
+	
+	public Frame() throws IOException, URISyntaxException
 	{
 		setTitle(title);
 		setSize(window_width, window_height);
 		
+		setIconImage(ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/icons/Icon.png").toURI())));
+		
 		cells = new Cell[tile_amount_y][tile_amount_x];
+		sim = new SimulationManager(cells);
 		
 		initializeCells();
 		
 		mouseListener = new M_MouseListener();
+		keyListener = new M_KeyListener();
 		
 		// by using pack(), offset doesnt have to be set manually
 		game_canvas = new canvas();
 		
 		game_canvas.addMouseListener(mouseListener);
 		game_canvas.addMouseMotionListener(mouseListener);
+		game_canvas.addKeyListener(keyListener);
+		
+		play_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/Play_BTN.png").toURI()));
+		stop_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/STOP_BTN.png").toURI()));
+		control_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/Control_screen.png").toURI()));
+
 		
 		add(game_canvas);
 		pack();
@@ -72,10 +102,13 @@ public class Frame extends JFrame{
 		}
 	}
 	
-	public void run()
+	public void run(long deltaTime) throws FontFormatException, IOException
 	{
-		game_canvas.update();
-		game_canvas.render();
+		
+		if(!isControlScreenActive) 
+			game_canvas.update(deltaTime);
+
+		game_canvas.render();	
 	}
 	
 	
@@ -88,9 +121,17 @@ public class Frame extends JFrame{
 			return new Dimension(window_width, window_height);
 		}
 		
-		private void update()
+		private void update(long deltaTime)
 		{
-			placeCells();
+			if(!Frame.isSimulationRunning)
+				placeCells();
+			
+			if(Frame.isSimulationRunning) {
+				//clear mouse listener
+				mouseListener.clear();
+				sim.runSimulation(deltaTime);
+			}
+				
 		}
 		
 		private void placeCells()
@@ -103,6 +144,7 @@ public class Frame extends JFrame{
 					//mouse has been pressed
 					if(mouseListener.returnPostion() != null)
 					{
+
 						//temporary rectangle for collision detection gets set
 						Rectangle temp_mouse_rect = new Rectangle(mouseListener.returnPostion().width,
 								mouseListener.returnPostion().height, 1,1);
@@ -121,7 +163,7 @@ public class Frame extends JFrame{
 			}
 		}
 		
-		private void render()
+		private void render() throws FontFormatException, IOException
 		{
 			BufferStrategy bs = getBufferStrategy();
 			
@@ -134,14 +176,56 @@ public class Frame extends JFrame{
 			Graphics2D g2 = (Graphics2D) g;
 			
 			/// ALL THE DIFFERENT DRAWING METHODS START HERE
-			
-			drawBackground(g2);
-			drawGrid(g2);
-			drawCells(g2);
-			
+			if(!isControlScreenActive) 
+			{
+				//when it switches the mouselistener has to be cleared
+				mouseListener.clear();
+				
+				drawBackground(g2);
+				drawGrid(g2);
+				drawCells(g2);
+				drawStartStopButton(g2);
+				drawSpeed(g2);
+			}
+			else
+			{
+				drawControlScreen(g2);
+			}
 			/// ALL THE DIFFERENT DRAWING METHODS END HERE
 			g.dispose();
 			bs.show();
+			
+		}
+		private void drawControlScreen(Graphics2D g2)
+		{
+			g2.drawImage(control_img, 0,0,null);
+		}
+		private void drawSpeed(Graphics2D g2) throws FontFormatException, IOException
+		{
+			int panel_width = Frame.tile_size*6;
+			int panel_height = Frame.tile_size*2;
+			
+			int panel_x = Frame.window_width - 8*Frame.tile_size;
+			int panel_y = 2;
+			
+			int font_offset_y = (int) (1.5*tile_size);
+			int font_offset_x = (int) (tile_size/2);
+			
+			g2.setColor(Color.black);
+			g2.fillRect(panel_x, panel_y, panel_width, panel_height);
+			
+			InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("assets/fonts/TheBrooklynSmoothBold.ttf");
+			Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
+			g2.setColor(Color.white);
+			g2.setFont(font);
+			g2.drawString("SPEED:  "+speed_factor, panel_x+font_offset_x,panel_y+font_offset_y);
+			
+			//RAHMEN
+			
+			int border_width = panel_width + 2*tile_size;
+
+			g2.setStroke(new BasicStroke(strokeWeight));
+			g2.drawRect(panel_x, panel_y, border_width, panel_height);
 			
 		}
 		
@@ -154,6 +238,23 @@ public class Frame extends JFrame{
 					cells[i][j].render(g2);
 				}
 			}
+		}
+		
+		private void drawStartStopButton(Graphics2D g2)
+		{
+			int button_size = Frame.tile_size*2;
+			
+			int button_x = Frame.window_width-button_size;
+			int button_y = 2;
+			
+			g2.setColor(Color.black);
+			g2.fillRect(button_x, button_y, button_size, button_size);
+			
+			if(Frame.isSimulationRunning)
+				g2.drawImage(play_img, button_x, button_y, button_size, button_size, null);
+			
+			else
+				g2.drawImage(stop_img, button_x, button_y, button_size, button_size, null);
 		}
 		
 		private void drawBackground(Graphics2D g2)
