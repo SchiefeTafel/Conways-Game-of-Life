@@ -48,7 +48,7 @@ public class Frame extends JFrame{
 	M_MouseListener mouseListener;
 	M_KeyListener keyListener;
 	
-	private float speed_factor = 1.0f;
+	public static float speed_factor = 1.0f;
 	
 	public Frame() throws IOException, URISyntaxException
 	{

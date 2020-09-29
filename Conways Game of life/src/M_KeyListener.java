@@ -23,6 +23,20 @@ public class M_KeyListener implements KeyListener{
 				Frame.isSimulationRunning = true;
 				
 		}
+		
+		else if(e.getKeyCode() == KeyEvent.VK_UP && pressable)
+		{
+			if(Frame.speed_factor < 3)Frame.speed_factor +=0.25;
+			SimulationManager.setSpeed(Frame.speed_factor);
+		}
+		
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN && pressable)
+		{
+			if(Frame.speed_factor > 0.5)Frame.speed_factor -=0.25;
+			SimulationManager.setSpeed(Frame.speed_factor);
+			System.out.println(Frame.speed_factor);
+		}
+		
 		pressable = false;
 	}
 
