@@ -7,7 +7,7 @@ public class Main {
 		
 		while(true)
 		{
-			frame.render();
+			frame.run();
 		}
 	}
 }
