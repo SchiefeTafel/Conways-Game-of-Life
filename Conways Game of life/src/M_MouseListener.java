@@ -31,6 +31,19 @@ public class M_MouseListener  extends Component implements MouseListener, MouseM
 			return null;
 	}
 	
+	public void setWritePosition(boolean writePosition)
+	{
+		this.writePosition = writePosition;
+	}
+	
+	public void clear()
+	{
+		this.mouseX = -1;
+		this.mouseY = -1;
+		
+		setWritePosition(false);
+	}
+	
 	public WRITE_MODE returnStatus()
 	{
 		return this.status;

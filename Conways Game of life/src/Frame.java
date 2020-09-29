@@ -100,8 +100,12 @@ public class Frame extends JFrame{
 			if(!Frame.isSimulationRunning)
 				placeCells();
 			
-			if(Frame.isSimulationRunning)
+			if(Frame.isSimulationRunning) {
+				//clear mouse listener
+				mouseListener.clear();
 				sim.runSimulation();
+			}
+				
 		}
 		
 		private void placeCells()
@@ -114,6 +118,7 @@ public class Frame extends JFrame{
 					//mouse has been pressed
 					if(mouseListener.returnPostion() != null)
 					{
+
 						//temporary rectangle for collision detection gets set
 						Rectangle temp_mouse_rect = new Rectangle(mouseListener.returnPostion().width,
 								mouseListener.returnPostion().height, 1,1);
