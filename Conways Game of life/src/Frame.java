@@ -12,21 +12,31 @@ import javax.swing.JPanel;
 
 public class Frame extends JFrame{
 	
-	private final int window_width = 800;
-	private final int window_height = 600;
+	public static final int window_width = 800;
+	public  static final int window_height = 600;
 	
 	private final String title = "Conway's Game of Life 2020";
 	
-	private final int tile_size = 20;
+	//needs to be visible for Cell class
+	public static final int tile_size = 20;
+	public static final int tile_amount_x = (window_width / tile_size);
+	public static final int tile_amount_y = (window_height / tile_size);
+	
 	private final Color gridColor = Color.WHITE;
 	private final int strokeWeight = 3;
 	
 	private canvas game_canvas;
 	
+	private Cell[][] cells;
+	
 	public Frame()
 	{
 		setTitle(title);
 		setSize(window_width, window_height);
+		
+		cells = new Cell[tile_amount_y][tile_amount_x];
+		
+		initializeCells();
 		
 		// by using pack(), offset doesnt have to be set manually
 		game_canvas = new canvas();
@@ -38,7 +48,21 @@ public class Frame extends JFrame{
 		setVisible(true);
 	}
 	
-	public void render()
+	private void initializeCells()
+	{
+		for(int i = 0; i< tile_amount_y; i++)
+		{
+			for(int j = 0; j < tile_amount_x; j++)
+			{
+				int position_y = i * tile_size;
+				int position_x = j * tile_size;
+				
+				cells[i][j] = new Cell(position_x, position_y);
+			}
+		}
+	}
+	
+	public void run()
 	{
 		game_canvas.render();
 	}
@@ -65,13 +89,26 @@ public class Frame extends JFrame{
 			Graphics2D g2 = (Graphics2D) g;
 			
 			/// ALL THE DIFFERENT DRAWING METHODS START HERE
+			
 			drawBackground(g2);
 			drawGrid(g2);
+			drawCells(g2);
 			
 			/// ALL THE DIFFERENT DRAWING METHODS END HERE
 			g.dispose();
 			bs.show();
 			
+		}
+		
+		private void drawCells(Graphics2D g2)
+		{
+			for(int i = 0; i< tile_amount_y; i++)
+			{
+				for(int j = 0; j< tile_amount_x; j++)
+				{
+					cells[i][j].render(g2);
+				}
+			}
 		}
 		
 		private void drawBackground(Graphics2D g2)
@@ -82,8 +119,6 @@ public class Frame extends JFrame{
 		
 		private void drawGrid(Graphics2D g2)
 		{
-			int tile_amount_x = window_width / tile_size;
-			int tile_amount_y = window_height / tile_size;
 			
 			Stroke s = new BasicStroke(strokeWeight);
 			
