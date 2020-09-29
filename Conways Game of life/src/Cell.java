@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class Cell {
 	
@@ -9,11 +10,19 @@ public class Cell {
 	private int position_y;
 	
 	private Color cellColor = Color.white;
+	private Rectangle rect;
 	
 	public Cell(int position_x, int position_y)
 	{
 		this.position_x = position_x;
 		this.position_y = position_y;
+		
+		this.rect = new Rectangle(position_x, position_y, Frame.tile_size, Frame.tile_size);
+	}
+	
+	public Rectangle getBounds()
+	{
+		return this.rect;
 	}
 	
 	public boolean isAlive()

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferStrategy;
 
@@ -29,6 +30,9 @@ public class Frame extends JFrame{
 	
 	private Cell[][] cells;
 	
+	//UI and Listeners
+	M_MouseListener mouseListener;
+	
 	public Frame()
 	{
 		setTitle(title);
@@ -38,8 +42,14 @@ public class Frame extends JFrame{
 		
 		initializeCells();
 		
+		mouseListener = new M_MouseListener();
+		
 		// by using pack(), offset doesnt have to be set manually
 		game_canvas = new canvas();
+		
+		game_canvas.addMouseListener(mouseListener);
+		game_canvas.addMouseMotionListener(mouseListener);
+		
 		add(game_canvas);
 		pack();
 		
@@ -64,16 +74,45 @@ public class Frame extends JFrame{
 	
 	public void run()
 	{
+		game_canvas.update();
 		game_canvas.render();
 	}
 	
 	
 	private class canvas extends Canvas{
 		
+		
 		@Override
 		public Dimension getPreferredSize()
 		{
 			return new Dimension(window_width, window_height);
+		}
+		
+		private void update()
+		{
+			placeCells();
+		}
+		
+		private void placeCells()
+		{
+			//check if the cursor intersects with a tile
+			for(int i = 0; i< tile_amount_y; i++)
+			{
+				for(int j = 0; j< tile_amount_x; j++)
+				{
+					//mouse has been pressed
+					if(mouseListener.returnPostion() != null)
+					{
+						//temporary rectangle for collision detection gets set
+						Rectangle temp_mouse_rect = new Rectangle(mouseListener.returnPostion().width,
+								mouseListener.returnPostion().height, 1,1);
+						
+						if(cells[i][j].getBounds().intersects(temp_mouse_rect)) {
+							cells[i][j].setStatus("ALIVE");
+						}
+					}
+				}
+			}
 		}
 		
 		private void render()
