@@ -29,6 +29,7 @@ public class Frame extends JFrame{
 	private canvas game_canvas;
 	
 	private Cell[][] cells;
+	private SimulationManager sim;
 	
 	public static boolean isSimulationRunning = false;
 	
@@ -42,6 +43,7 @@ public class Frame extends JFrame{
 		setSize(window_width, window_height);
 		
 		cells = new Cell[tile_amount_y][tile_amount_x];
+		sim = new SimulationManager(cells);
 		
 		initializeCells();
 		
@@ -95,7 +97,11 @@ public class Frame extends JFrame{
 		
 		private void update()
 		{
-			placeCells();
+			if(!Frame.isSimulationRunning)
+				placeCells();
+			
+			if(Frame.isSimulationRunning)
+				sim.runSimulation();
 		}
 		
 		private void placeCells()

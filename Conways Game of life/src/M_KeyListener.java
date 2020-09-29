@@ -22,7 +22,6 @@ public class M_KeyListener implements KeyListener{
 			else if(!Frame.isSimulationRunning)
 				Frame.isSimulationRunning = true;
 				
-			System.out.println(Frame.isSimulationRunning);
 		}
 		pressable = false;
 	}
