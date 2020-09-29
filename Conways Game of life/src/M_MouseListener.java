@@ -28,13 +28,20 @@ public class M_MouseListener  extends Component implements MouseListener, MouseM
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		this.writePosition = true;
+		
+		this.mouseX = e.getX();
+		this.mouseY = e.getY();
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
+		this.writePosition = true;
 		
+		this.mouseX = e.getX();
+		this.mouseY = e.getY();
 	}
 
 	@Override
