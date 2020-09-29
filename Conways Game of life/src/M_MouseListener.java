@@ -4,12 +4,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+enum WRITE_MODE{
+	SET,
+	DELETE
+}
+
 public class M_MouseListener  extends Component implements MouseListener, MouseMotionListener {
 	
 	private int mouseX;
 	private int mouseY;
 	
 	private boolean writePosition = false;
+	private WRITE_MODE status = WRITE_MODE.SET;
 	
 	public M_MouseListener()
 	{
@@ -24,24 +30,43 @@ public class M_MouseListener  extends Component implements MouseListener, MouseM
 		else
 			return null;
 	}
+	
+	public WRITE_MODE returnStatus()
+	{
+		return this.status;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		
 		this.writePosition = true;
 		
 		this.mouseX = e.getX();
 		this.mouseY = e.getY();
+		
+		// should something be set or deleted
+		if(e.getButton() == MouseEvent.BUTTON1)
+			this.status = WRITE_MODE.SET;
+		
+		else if(e.getButton() == MouseEvent.BUTTON3)
+			this.status = WRITE_MODE.DELETE;
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		
+	
 		this.writePosition = true;
 		
 		this.mouseX = e.getX();
 		this.mouseY = e.getY();
+		
+		//should something be set or deleted
+		if(e.getButton() == MouseEvent.BUTTON1)
+			this.status = WRITE_MODE.SET;
+		
+		else if(e.getButton() == MouseEvent.BUTTON3)
+			this.status = WRITE_MODE.DELETE;
 	}
 
 	@Override
@@ -70,6 +95,13 @@ public class M_MouseListener  extends Component implements MouseListener, MouseM
 		
 		this.mouseX = e.getX();
 		this.mouseY = e.getY();
+		
+		//should something be set or deleted
+		if(e.getButton() == MouseEvent.BUTTON1)
+			this.status = WRITE_MODE.SET;
+		
+		else if(e.getButton() == MouseEvent.BUTTON3)
+			this.status = WRITE_MODE.DELETE;
 		
 	}
 

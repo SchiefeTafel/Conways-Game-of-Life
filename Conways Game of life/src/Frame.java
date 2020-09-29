@@ -108,7 +108,13 @@ public class Frame extends JFrame{
 								mouseListener.returnPostion().height, 1,1);
 						
 						if(cells[i][j].getBounds().intersects(temp_mouse_rect)) {
-							cells[i][j].setStatus("ALIVE");
+							
+							if(mouseListener.returnStatus() == WRITE_MODE.SET)
+									cells[i][j].setStatus("ALIVE");
+							
+							else if(mouseListener.returnStatus() == WRITE_MODE.DELETE)
+								cells[i][j].setStatus("DEAD");
+								
 						}
 					}
 				}
