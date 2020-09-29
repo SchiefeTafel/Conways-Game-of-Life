@@ -2,6 +2,8 @@ import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -10,6 +12,7 @@ import java.awt.Stroke;
 import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
@@ -44,6 +47,8 @@ public class Frame extends JFrame{
 	//UI and Listeners
 	M_MouseListener mouseListener;
 	M_KeyListener keyListener;
+	
+	private float speed_factor = 1.0f;
 	
 	public Frame() throws IOException, URISyntaxException
 	{
@@ -91,7 +96,7 @@ public class Frame extends JFrame{
 		}
 	}
 	
-	public void run(long deltaTime)
+	public void run(long deltaTime) throws FontFormatException, IOException
 	{
 		game_canvas.update(deltaTime);
 		game_canvas.render();
@@ -149,7 +154,7 @@ public class Frame extends JFrame{
 			}
 		}
 		
-		private void render()
+		private void render() throws FontFormatException, IOException
 		{
 			BufferStrategy bs = getBufferStrategy();
 			
@@ -167,10 +172,39 @@ public class Frame extends JFrame{
 			drawGrid(g2);
 			drawCells(g2);
 			drawStartStopButton(g2);
+			drawSpeed(g2);
 			
 			/// ALL THE DIFFERENT DRAWING METHODS END HERE
 			g.dispose();
 			bs.show();
+			
+		}
+		private void drawSpeed(Graphics2D g2) throws FontFormatException, IOException
+		{
+			int panel_width = Frame.tile_size*6;
+			int panel_height = Frame.tile_size*2;
+			
+			int panel_x = Frame.window_width - 8*Frame.tile_size;
+			int panel_y = 2;
+			
+			int font_offset_y = (int) (1.5*tile_size);
+			int font_offset_x = (int) (tile_size/2);
+			
+			g2.setColor(Color.black);
+			g2.fillRect(panel_x, panel_y, panel_width, panel_height);
+			
+			InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("assets/TheBrooklynSmoothBold.ttf");
+			Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
+			g2.setColor(Color.white);
+			g2.setFont(font);
+			g2.drawString("SPEED:  "+speed_factor, panel_x+font_offset_x,panel_y+font_offset_y);
+			
+			//RAHMEN
+			
+			int border_width = panel_width + 2*tile_size;
+
+			g2.setStroke(new BasicStroke(strokeWeight));
+			g2.drawRect(panel_x, panel_y, border_width, panel_height);
 			
 		}
 		

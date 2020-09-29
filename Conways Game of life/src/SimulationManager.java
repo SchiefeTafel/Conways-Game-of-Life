@@ -4,8 +4,8 @@ public class SimulationManager {
 	private int numberOfGenerations = 0;
 	private Cell[][] cells;
 	
-	long lifeTimeOfGeneration = 100; //in ms
-	long timer = 0;
+	private long lifeTimeOfGeneration = 100; //in ms
+	private long timer = 0;
 	
 	public SimulationManager()
 	{
@@ -20,6 +20,13 @@ public class SimulationManager {
 	public void setCells(Cell[][] cells)
 	{
 		this.cells = cells;
+	}
+	
+	public void setSpeed(double factor)
+	{
+		//a speed of 1.0 => 100ms per generation
+		
+		lifeTimeOfGeneration *= factor;
 	}
 	
 	public void runSimulation(long deltaTime)
