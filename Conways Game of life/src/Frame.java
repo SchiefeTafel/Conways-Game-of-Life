@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +58,8 @@ public class Frame extends JFrame{
 		setTitle(title);
 		setSize(window_width, window_height);
 		
+		setIconImage(ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/icons/Icon.png").toURI())));
+		
 		cells = new Cell[tile_amount_y][tile_amount_x];
 		sim = new SimulationManager(cells);
 		
@@ -72,9 +75,9 @@ public class Frame extends JFrame{
 		game_canvas.addMouseMotionListener(mouseListener);
 		game_canvas.addKeyListener(keyListener);
 		
-		play_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/Play_BTN.png").toURI()));
-		stop_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/STOP_BTN.png").toURI()));
-		control_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/Control_screen.png").toURI()));
+		play_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/Play_BTN.png").toURI()));
+		stop_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/STOP_BTN.png").toURI()));
+		control_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/images/Control_screen.png").toURI()));
 
 		
 		add(game_canvas);
@@ -211,7 +214,7 @@ public class Frame extends JFrame{
 			g2.setColor(Color.black);
 			g2.fillRect(panel_x, panel_y, panel_width, panel_height);
 			
-			InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("assets/TheBrooklynSmoothBold.ttf");
+			InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("assets/fonts/TheBrooklynSmoothBold.ttf");
 			Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(24f);
 			g2.setColor(Color.white);
 			g2.setFont(font);
