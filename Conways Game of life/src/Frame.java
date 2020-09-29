@@ -4,10 +4,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -33,11 +38,14 @@ public class Frame extends JFrame{
 	
 	public static boolean isSimulationRunning = false;
 	
+	private Image play_img;
+	private Image stop_img;
+	
 	//UI and Listeners
 	M_MouseListener mouseListener;
 	M_KeyListener keyListener;
 	
-	public Frame()
+	public Frame() throws IOException, URISyntaxException
 	{
 		setTitle(title);
 		setSize(window_width, window_height);
@@ -56,6 +64,10 @@ public class Frame extends JFrame{
 		game_canvas.addMouseListener(mouseListener);
 		game_canvas.addMouseMotionListener(mouseListener);
 		game_canvas.addKeyListener(keyListener);
+		
+		play_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/Play_BTN.png").toURI()));
+		stop_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/STOP_BTN.png").toURI()));
+
 		
 		add(game_canvas);
 		pack();
@@ -154,6 +166,7 @@ public class Frame extends JFrame{
 			drawBackground(g2);
 			drawGrid(g2);
 			drawCells(g2);
+			drawStartStopButton(g2);
 			
 			/// ALL THE DIFFERENT DRAWING METHODS END HERE
 			g.dispose();
@@ -170,6 +183,23 @@ public class Frame extends JFrame{
 					cells[i][j].render(g2);
 				}
 			}
+		}
+		
+		private void drawStartStopButton(Graphics2D g2)
+		{
+			int button_size = Frame.tile_size*2;
+			
+			int button_x = Frame.window_width-button_size;
+			int button_y = 2;
+			
+			g2.setColor(Color.black);
+			g2.fillRect(button_x, button_y, button_size, button_size);
+			
+			if(Frame.isSimulationRunning)
+				g2.drawImage(play_img, button_x, button_y, button_size, button_size, null);
+			
+			else
+				g2.drawImage(stop_img, button_x, button_y, button_size, button_size, null);
 		}
 		
 		private void drawBackground(Graphics2D g2)
