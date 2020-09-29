@@ -40,9 +40,11 @@ public class Frame extends JFrame{
 	private SimulationManager sim;
 	
 	public static boolean isSimulationRunning = false;
+	public static boolean isControlScreenActive = true;
 	
 	private Image play_img;
 	private Image stop_img;
+	private Image control_img;
 	
 	//UI and Listeners
 	M_MouseListener mouseListener;
@@ -72,6 +74,7 @@ public class Frame extends JFrame{
 		
 		play_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/Play_BTN.png").toURI()));
 		stop_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/STOP_BTN.png").toURI()));
+		control_img = ImageIO.read(new File(this.getClass().getClassLoader().getResource("assets/Control_screen.png").toURI()));
 
 		
 		add(game_canvas);
@@ -98,8 +101,11 @@ public class Frame extends JFrame{
 	
 	public void run(long deltaTime) throws FontFormatException, IOException
 	{
-		game_canvas.update(deltaTime);
-		game_canvas.render();
+		
+		if(!isControlScreenActive) 
+			game_canvas.update(deltaTime);
+
+		game_canvas.render();	
 	}
 	
 	
@@ -167,17 +173,29 @@ public class Frame extends JFrame{
 			Graphics2D g2 = (Graphics2D) g;
 			
 			/// ALL THE DIFFERENT DRAWING METHODS START HERE
-			
-			drawBackground(g2);
-			drawGrid(g2);
-			drawCells(g2);
-			drawStartStopButton(g2);
-			drawSpeed(g2);
-			
+			if(!isControlScreenActive) 
+			{
+				//when it switches the mouselistener has to be cleared
+				mouseListener.clear();
+				
+				drawBackground(g2);
+				drawGrid(g2);
+				drawCells(g2);
+				drawStartStopButton(g2);
+				drawSpeed(g2);
+			}
+			else
+			{
+				drawControlScreen(g2);
+			}
 			/// ALL THE DIFFERENT DRAWING METHODS END HERE
 			g.dispose();
 			bs.show();
 			
+		}
+		private void drawControlScreen(Graphics2D g2)
+		{
+			g2.drawImage(control_img, 0,0,null);
 		}
 		private void drawSpeed(Graphics2D g2) throws FontFormatException, IOException
 		{

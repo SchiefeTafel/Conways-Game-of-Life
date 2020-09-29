@@ -14,7 +14,7 @@ public class M_KeyListener implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
-		if(e.getKeyCode() == KeyEvent.VK_SPACE && pressable) {
+		if(e.getKeyCode() == KeyEvent.VK_SPACE && pressable && !Frame.isControlScreenActive) {
 			
 			if(Frame.isSimulationRunning)
 				Frame.isSimulationRunning = false;
@@ -24,17 +24,26 @@ public class M_KeyListener implements KeyListener{
 				
 		}
 		
-		else if(e.getKeyCode() == KeyEvent.VK_UP && pressable)
+		else if(e.getKeyCode() == KeyEvent.VK_UP && pressable && !Frame.isControlScreenActive)
 		{
 			if(Frame.speed_factor < 3)Frame.speed_factor +=0.25;
 			SimulationManager.setSpeed(Frame.speed_factor);
 		}
 		
-		else if(e.getKeyCode() == KeyEvent.VK_DOWN && pressable)
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN && pressable && !Frame.isControlScreenActive)
 		{
 			if(Frame.speed_factor > 0.5)Frame.speed_factor -=0.25;
 			SimulationManager.setSpeed(Frame.speed_factor);
 			System.out.println(Frame.speed_factor);
+		}
+		
+		else if(e.getKeyCode() == KeyEvent.VK_ESCAPE && pressable)
+		{
+			//alternating between the two states
+			if(Frame.isControlScreenActive)
+				Frame.isControlScreenActive = false;
+			else
+				Frame.isControlScreenActive = true;
 		}
 		
 		pressable = false;
