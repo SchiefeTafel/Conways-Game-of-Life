@@ -30,8 +30,11 @@ public class Frame extends JFrame{
 	
 	private Cell[][] cells;
 	
+	public static boolean isSimulationRunning = false;
+	
 	//UI and Listeners
 	M_MouseListener mouseListener;
+	M_KeyListener keyListener;
 	
 	public Frame()
 	{
@@ -43,12 +46,14 @@ public class Frame extends JFrame{
 		initializeCells();
 		
 		mouseListener = new M_MouseListener();
+		keyListener = new M_KeyListener();
 		
 		// by using pack(), offset doesnt have to be set manually
 		game_canvas = new canvas();
 		
 		game_canvas.addMouseListener(mouseListener);
 		game_canvas.addMouseMotionListener(mouseListener);
+		game_canvas.addKeyListener(keyListener);
 		
 		add(game_canvas);
 		pack();
