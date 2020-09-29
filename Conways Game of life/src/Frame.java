@@ -79,9 +79,9 @@ public class Frame extends JFrame{
 		}
 	}
 	
-	public void run()
+	public void run(long deltaTime)
 	{
-		game_canvas.update();
+		game_canvas.update(deltaTime);
 		game_canvas.render();
 	}
 	
@@ -95,7 +95,7 @@ public class Frame extends JFrame{
 			return new Dimension(window_width, window_height);
 		}
 		
-		private void update()
+		private void update(long deltaTime)
 		{
 			if(!Frame.isSimulationRunning)
 				placeCells();
@@ -103,7 +103,7 @@ public class Frame extends JFrame{
 			if(Frame.isSimulationRunning) {
 				//clear mouse listener
 				mouseListener.clear();
-				sim.runSimulation();
+				sim.runSimulation(deltaTime);
 			}
 				
 		}

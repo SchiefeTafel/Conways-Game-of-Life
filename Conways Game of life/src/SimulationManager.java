@@ -4,6 +4,9 @@ public class SimulationManager {
 	private int numberOfGenerations = 0;
 	private Cell[][] cells;
 	
+	long lifeTimeOfGeneration = 100; //in ms
+	long timer = 0;
+	
 	public SimulationManager()
 	{
 		this.cells = null;
@@ -19,14 +22,22 @@ public class SimulationManager {
 		this.cells = cells;
 	}
 	
-	public void runSimulation()
+	public void runSimulation(long deltaTime)
 	{
-		//keep track of the amount of neighbours each cell has
-		int[][] neighbour_list = nums_neighbours();
+		if(timer >= lifeTimeOfGeneration) {
+			
+			//keep track of the amount of neighbours each cell has
+			int[][] neighbour_list = nums_neighbours();
+			
+			boolean[][] fate_of_next_generation = determineCellStatus(neighbour_list);
+			
+			applyCellStatusToNextGeneration(fate_of_next_generation);
+			timer = 0;
+		}
 		
-		boolean[][] fate_of_next_generation = determineCellStatus(neighbour_list);
+		else
+			timer += deltaTime;
 		
-		applyCellStatusToNextGeneration(fate_of_next_generation);
 	}
 	
 	private void applyCellStatusToNextGeneration(boolean[][] fate)
